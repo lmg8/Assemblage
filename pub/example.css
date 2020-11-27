@@ -1,0 +1,42 @@
+body {
+    font-family: "Lato", sans-serif;
+}
+html {
+    background: #1b1b2f;
+    color: #FFF;
+}
+
+.board {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+}
+
+
+
+.column {
+    padding: 10px;
+    background: #2c2c2c;
+    border: 2px solid #2c2c2c;
+}
+
+.column img{
+    display:inline-block;
+    height: 100px;
+    width: auto;
+    margin-right: 5px;
+    cursor: grabbing;
+}
+
+.center{
+    display: flex;
+    justify-content: center;
+}
+
+.showAPage{
+    margin-top: 50px;
+}
+
+.linksToPages a{
+    margin-left: 10px;
+}
