@@ -14,10 +14,16 @@ function assemble() {
             if(LinkGrabber.textarea != null) return;
 
             const textarea = LinkGrabber.textarea = document.createElement("textarea");
-            textarea.setAttribute("style", "position: absolute; width: 100%; margin: 0; top: 0; bottom: 0; right: 0; left: 0; z-index: 99999999");
+            textarea.setAttribute("style", "position: absolute; height:100%; width: 100%; margin: 0; top: 0; bottom: 0; right: 0; left: 0; z-index: 99999999");
             textarea.style.opacity = "0.000000000000000001";
             $("#" + LinkGrabber.folder).append(textarea);
-            textarea.oninput = LinkGrabber.evt_got_link;
+
+            textarea.addEventListener("dragover", LinkGrabber.evt_default, false);
+            textarea.addEventListener("dragenter", LinkGrabber.evt_default, false);
+            textarea.addEventListener("mouseup", LinkGrabber.evt_drag_out, false);
+            textarea.addEventListener("dragleave", LinkGrabber.evt_drag_out, false);
+
+
         },
 
         detach_ta: function(){
@@ -30,26 +36,39 @@ function assemble() {
 
         /* Event Handlers */
 
-        evt_drag_over: function(){
+        evt_drag_over: function(e){
+            e.stopPropagation();
+            e.preventDefault();
             LinkGrabber.attach_ta(); //Create TA overlay
         },
 
-        evt_got_link: function(){
-            const link = LinkGrabber.textarea.value;
-            //TODO: diplaynewsave
-
+        evt_got_link: function(link){
             // alert(link);
             if(LinkGrabber.isUrl(link)){
                 displayNewSaveUrl(LinkGrabber.folder, link);
             } else {
                 alert("not a url");
             }
-
             LinkGrabber.detach_ta();
         },
 
         evt_drag_out: function(e){
+            e.stopPropagation();
+            e.preventDefault();
+            if(LinkGrabber.textarea == null) return;
             if(e.target == LinkGrabber.textarea) LinkGrabber.detach_ta();
+        },
+
+        evt_drop: function(e){
+            e.stopPropagation();
+            e.preventDefault();
+            if(e.target == LinkGrabber.textarea) {
+                LinkGrabber.evt_got_link(e.dataTransfer.getData('URL'));
+                console.log(e.dataTransfer.getData('URL'))
+            } else{
+                LinkGrabber.detach_ta()
+            }
+
         },
 
         isUrl:function (string)
@@ -59,24 +78,25 @@ function assemble() {
         },
 
         /* Start/Stop */
+        evt_default: function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+        },
 
         start: function(folder){
             LinkGrabber.folder = folder;
             document.addEventListener("dragover", LinkGrabber.evt_drag_over, false);
-            document.addEventListener("dragenter", LinkGrabber.evt_drag_over, false);
-
-            document.addEventListener("mouseup", LinkGrabber.evt_drag_out, false);
-            document.addEventListener("dragleave", LinkGrabber.evt_drag_out, false);
+            document.addEventListener("drop", LinkGrabber.evt_drop, false);
         },
 
-        stop: function(){
+        /*stop: function(){
             document.removeEventListener("dragover", LinkGrabber.evt_drag_over);
             document.removeEventListener("dragenter", LinkGrabber.evt_drag_over);
 
             document.removeEventListener("mouseup", LinkGrabber.evt_drag_out);
             document.removeEventListener("dragleave", LinkGrabber.evt_drag_out);
             LinkGrabber.detach_ta();
-        }
+        },*/
     };
 
     class Folder {
