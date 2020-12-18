@@ -125,8 +125,14 @@ function assemble() {
 
 
     function openMainNav() {
-        $('#mySidenav').css("width", "350px");
-        $('#main').css("margin-left", "350px");
+        $('#mySidenav').css("width", set.width);
+
+        if (set.value === "right"){
+            $('#main').css("margin-right", set.width);
+        } else{
+            $('#main').css("margin-left", set.width);
+        }
+
         $('#mySidenav').css("visibility", "visible");
 
 
@@ -137,8 +143,12 @@ function assemble() {
      */
     function openNav(id) {
         $('#' + id).css("visibility", "visible");
-        $('#' + id).css("width", "350px");
-        $('#main').css("margin-left", "350px");
+        $('#' + id).css("width", set.width);
+        if (set.value === "right") {
+            $('#main').css("margin-right", set.width);
+        } else {
+            $('#main').css("margin-left", set.width);
+        }
     }
 
     /**
@@ -147,13 +157,21 @@ function assemble() {
     function closeNav() {
         $('.sidenav').css("visibility", "hidden");
         $('.sidenav').css("width", "0");
-        $('#main').css("margin-left", "0");
+        if (set.value === "right") {
+            $('#main').css("margin-right", "0");
+        } else {
+            $('#main').css("margin-left", "0");
+        }
     }
 
     function hideMainDrawer(){
         $('#mySidenav').css("visibility", "hidden");
         $('#mySidenav').css("width", "0");
-        $('#main').css("margin-left", "0");
+        if (set.value === "right") {
+            $('#main').css("margin-right", "0");
+        } else {
+            $('#main').css("margin-left", "0");
+        }
 
     }
 
@@ -170,7 +188,14 @@ function assemble() {
         //TODO: change id to created id
         //https://stackoverflow.com/questions/48239/getting-the-id-of-the-element-that-fired-an-event
         const newFolderPage = $('<div></div>', {id: `${newFolder.id}PAGE`, class: 'sidenav'});
+
+        newFolderPage.css( set.value,"0")
+
         $('body').append(newFolderPage);
+        //if developer changed background color
+        if(colorTheme.background){
+            $('.sidenav').css("background-color", colorTheme.background)
+        }
         addFolderHeader(newFolder.id, newFolder.name);
         openNav(newFolderPage.attr("id"));
         LinkGrabber.start(newFolderPage.attr("id"));
@@ -200,6 +225,10 @@ function assemble() {
             'text-overflow' : 'ellipsis'
         });
 
+        if(colorTheme.titleFont){
+            folderName.css("color", colorTheme.titleFont);
+        }
+
         folderName.on( "mouseenter", function(){
             $(this).css("background", "#818181");
         })
@@ -213,8 +242,30 @@ function assemble() {
         const exitButton = $('<a></a>', {href: "javascript:void(0)", class: "closebtn"}).html('&times;');
         exitButton.on("click", function() {closeNav()});
 
-        //TODO: implement add current page
+        if(colorTheme.buttonColor && colorTheme.buttonHoverColor){
+            exitButton.css("color", colorTheme.buttonColor)
+            exitButton.on("mouseenter", function(){
+                $(this).css("color", colorTheme.buttonHoverColor)
+            }).on("mouseleave", function(){
+                $(this).css("color",colorTheme.buttonColor)
+            })
+            backButton.css("color", colorTheme.buttonColor)
+            backButton.on("mouseenter", function(){
+                $(this).css("color", colorTheme.buttonHoverColor)
+            }).on("mouseleave", function(){
+                $(this).css("color",colorTheme.buttonColor)
+            })
+        }
+
         const savePage = $('<a></a>', {href: "#", id: "createFolder"}).html('&plus; Save current page');
+        if(colorTheme.secondaryFont && colorTheme.hoverFont){
+            savePage.css("color", colorTheme.secondaryFont)
+            savePage.on("mouseenter", function(){
+                $(this).css("color", colorTheme.hoverFont)
+            }).on("mouseleave", function(){
+                $(this).css("color",colorTheme.secondaryFont)
+            })
+        }
         savePage.on("click", function(){
             displayNewSave(id);
             return false;
@@ -222,6 +273,9 @@ function assemble() {
 
 
         const header = $('<div></div>', {class: 'header'});
+        if(colorTheme.headerBackground){
+            header.css("background-color", colorTheme.headerBackground)
+        }
         header.append(backButton, folderName, exitButton, savePage);
 
         const savedItems = $('<div></div>', {class: 'savedItems'});
@@ -252,6 +306,11 @@ function assemble() {
      */
     function displayNewFolder(newFolder){
         const folder = $('<div></div>', {class: "folder", id: `${newFolder.id}`});
+
+        //if developer changes folder background color
+        if(colorTheme.folderBackground){
+            folder.css("background-color", colorTheme.folderBackground)
+        }
         $('.drawerBody').append(folder);
 
         const clickFolder = $('<a></a>', {href: "#"});
@@ -264,15 +323,63 @@ function assemble() {
         const folderInformation = $('<div></div>', {class: "folderInfo"});
         const folderName = $('<h4>').append($('<b>').text(`${newFolder.name}`));
         const numberOfItems = $('<p>').text(`${newFolder.items.length} items`);
+        const deleteButton = $('<object></object>').append(
+            $('<a></a>', {href: "javascript:void(0)", id: "deleteBtn"})
+                .html('&#128465;'));
+
+        if(colorTheme.deleteColor && colorTheme.deleteHoverColor) {
+            deleteButton.css("color", colorTheme.deleteColor)
+            deleteButton.on("mouseenter", function () {
+                $(this).css("color", colorTheme.deleteHoverColor)
+            }).on("mouseleave", function () {
+                $(this).css("color", colorTheme.deleteColor)
+            })
+        }
+
+        deleteButton.on("click",function(e){
+            deleteFolder(newFolder)
+            //stop click from propagating
+            if (!e) {let e = window.event;
+            e.cancelBubble = true;}
+            if (e.stopPropagation) e.stopPropagation();
+        })
+
+        //if developer changes main font color
+        if(colorTheme.mainFont){
+            folderName.css("color", colorTheme.mainFont)
+            numberOfItems.css("color",colorTheme.mainFont)
+        }
 
         folderInformation.append(folderName);
         folderInformation.append(numberOfItems);
 
+        clickFolder.append(deleteButton);
         clickFolder.append(folderInformation);
+        deleteButton.css("display", "none")
+        clickFolder.on("mouseenter", function(){
+            deleteButton.css("display", "block")
+        }).on("mouseleave", function(){
+            deleteButton.css("display", "none")
+        })
         folder.append(clickFolder)
 
     }
 
+    function deleteFolder(folderObj){
+        //remove folder page from DOM
+        $('#' + folderObj.id + 'PAGE').remove();
+
+        //remove folder from DOM
+        $("#"+ folderObj.id).remove();
+
+        //remove folder from list of folders
+        _self.folders = _self.folders.filter( obj => obj.id !== folderObj.id);
+    }
+
+    /**
+     * This is to show new saved item when user clicks "Save current page"
+     * @param folderID id of the folder to save new item to
+     */
     function displayNewSave(folderID){
         //TODO: add ability to edit name
 
@@ -286,12 +393,15 @@ function assemble() {
         }
 
         const item = new Item(name,$(location).attr('hash').toString(), "");
-
         //console.log(_self.folders);
         //store image
         // $($(location).attr('hash').toString()+'img').first();
 
         const folder = $('<div></div>', {class: "folder", id: `${item.id}`});
+        //if developer changes folder background color
+        if(colorTheme.folderBackground){
+            folder.css("background-color", colorTheme.folderBackground)
+        }
         //console.log(folderID);
         $('#' + folderID + 'PAGE').find('.savedItems').append(folder);
 
@@ -309,32 +419,62 @@ function assemble() {
                 show('');
             })
         }
-        // console.log(item.link)
-        // console.log($(item.link).contents().first().text().toString());
-        // console.log(item.name);
-
 
         const folderInformation = $('<div></div>', {class: "folderInfo"});
 
         //update item name to first
         const folderName = $('<h4>').append($('<b>').text(`${item.name}`));
+        //if developer changes main font color
+        if(colorTheme.mainFont){
+            folderName.css("color", colorTheme.mainFont)
+        }
 
+        const deleteButton = $('<object></object>').append(
+            $('<a></a>', {href: "javascript:void(0)", id: "deleteBtn"})
+                .html('&#128465;'));
+        if(colorTheme.deleteColor && colorTheme.deleteHoverColor) {
+            deleteButton.css("color", colorTheme.deleteColor)
+            deleteButton.on("mouseenter", function () {
+                $(this).css("color", colorTheme.deleteHoverColor)
+            }).on("mouseleave", function () {
+                $(this).css("color", colorTheme.deleteColor)
+            })
+        }
+
+        deleteButton.on("click",function(e){
+            deleteItem(folderID, item.id)
+            //stop click from propagating
+            if (!e) {let e = window.event;
+                e.cancelBubble = true;}
+            if (e.stopPropagation) e.stopPropagation();
+        })
 
         folderInformation.append(folderName);
+
+        clickFolder.append(deleteButton);
         clickFolder.append(folderInformation);
+        deleteButton.css("display", "none")
+        clickFolder.on("mouseenter", function(){
+            deleteButton.css("display", "block")
+        }).on("mouseleave", function(){
+            deleteButton.css("display", "none")
+        })
         folder.append(clickFolder)
 
         //save item to object
         const currentFolder =  _self.folders.filter((f) => f.id === folderID)[0]
         currentFolder.items.push(item);
 
-        //console.log(_self.folders);
-
         //update length in main drawer
         $('#'+ folderID +' p').text(`${currentFolder.items.length} items`);
 
     }
 
+    /**
+     * This is to show new saved item when user drags and drops a link to folder
+     * @param folderID id of folder to save new item to
+     * @param link takes user to this link when saved item is clicked.
+     */
     function displayNewSaveUrl(folderID, link) {
         //TODO: add ability to edit name
 
@@ -351,6 +491,10 @@ function assemble() {
 
         const folder = $('<div></div>', {class: "folder", id: `${item.id}`});
         $('#' + folderID).find('.savedItems').append(folder);
+
+        if(colorTheme.folderBackground){
+            folder.css("background-color", colorTheme.folderBackground)
+        }
 
         //check if link is image url {
         if(link.match(/\.(jpeg|jpg|gif|png)$/) != null) {
@@ -382,10 +526,41 @@ function assemble() {
 
         //update item name to first
         const folderName = $('<h4>').append($('<b>').text(`${item.name}`));
+        //if developer changes main font color
+        if(colorTheme.mainFont){
+            folderName.css("color", colorTheme.mainFont)
+        }
 
+        const deleteButton = $('<object></object>').append(
+            $('<a></a>', {href: "javascript:void(0)", id: "deleteBtn"})
+                .html('&#128465;'));
+        if(colorTheme.deleteColor && colorTheme.deleteHoverColor) {
+            deleteButton.css("color", colorTheme.deleteColor)
+            deleteButton.on("mouseenter", function () {
+                $(this).css("color", colorTheme.deleteHoverColor)
+            }).on("mouseleave", function () {
+                $(this).css("color", colorTheme.deleteColor)
+            })
+        }
+
+        deleteButton.on("click",function(e){
+            deleteItem(folderID, item.id)
+            //stop click from propagating
+            if (!e) {let e = window.event;
+                e.cancelBubble = true;}
+            if (e.stopPropagation) e.stopPropagation();
+        })
 
         folderInformation.append(folderName);
+
+        clickFolder.append(deleteButton);
         clickFolder.append(folderInformation);
+        deleteButton.css("display", "none")
+        clickFolder.on("mouseenter", function(){
+            deleteButton.css("display", "block")
+        }).on("mouseleave", function(){
+            deleteButton.css("display", "none")
+        })
         folder.append(clickFolder)
 
         //save item to object
@@ -393,8 +568,21 @@ function assemble() {
         currentFolder.items.push(item);
 
         //update length in main drawer
+        console.log(currentFolder.items.length)
         $('#'+ folderID +' p').text(`${currentFolder.items.length} items`);
+        console.log(currentFolder)
 
+    }
+
+    function deleteItem(folderID, itemID){
+        $('#' + itemID).remove();
+
+        //remove item from folder Objs
+        const indexToDelete = _self.folders.findIndex(obj => obj.id === folderID);
+        _self.folders[indexToDelete].items.splice(_self.folders[indexToDelete].items.findIndex(obj => obj.id === itemID),1)
+
+        //update number of items in folder DOM
+        $('#'+ folderID +' p').text(`${_self.folders[indexToDelete].items.length} items`);
     }
 
     function createImageModal(folderID, link){
@@ -424,7 +612,7 @@ function assemble() {
         const drawerBody = $('<div></div>', {class: 'drawerBody'});
         $('#mySidenav').append(header, drawerBody);
 
-        const title = $('<h5></h5>', {id: 'title'}).text('Assemblage');
+        const title = $('<h5></h5>', {id: 'title'}).text(`${set.title}`);
 
         const exitButton = $('<a></a>', {href: "javascript:void(0)", class: "closebtn"}).html('&times;');
         exitButton.on("click", function() {closeNav()});
@@ -458,16 +646,115 @@ function assemble() {
     /*allowed to use and access by developer***************************************************************************/
     const _self = {};
     _self.folders = [new Folder("Sample Folder")]
+    const set = {value: "left", title: "Assemblage", width: "350px"}
 
     //create first assemblage drawer to page
-    _self.createAssemblage = function(){
+    /**
+     *
+     * @param settings Accepts the following settings: {position: "right", title: "Assemblage", width: "350px"}
+     */
+    _self.createAssemblage = function(settings){
         const drawer = $('<div></div>', {id: "mySidenav", class: 'sidenav'});
+
+        if(settings.position === "right" ) {
+            drawer.css(settings.position, 0);
+            set.value = settings.position
+        } else {
+            drawer.css("left", 0)
+        }
+
+        if(settings.title){
+            //accept only up to 22 characters
+            if(settings.title.length > 22) {
+                set.title = settings.title.slice(0, -(settings.title.length - 22));
+            } else{
+                set.title = settings.title
+            }
+        }
+        if(settings.width){
+            set.width = settings.width;
+        }
+
         $('body').append(drawer)
         addHeader();
 
         $('#createFolder').on("click", function() {createNewFolder(); return false;});
     }
 
+    //store colors received from developer
+    const colorTheme = {};
+
+    _self.changeBackgroundColor = function(background){
+        if(background){
+            $('.sidenav').css("background-color", background)
+            colorTheme.background = background;
+        }
+    }
+
+    _self.changeHeaderBackgroundColor = function(headerBackground){
+        if(headerBackground){
+            $('.header').css("background-color", headerBackground)
+            colorTheme.headerBackground = headerBackground;
+        }
+    }
+
+    _self.changeFolderBackgroundColor = function(folderBackground){
+        if(folderBackground){
+            $('.folder').css("background-color", folderBackground)
+            colorTheme.folderBackground = folderBackground;
+        }
+    }
+
+    /**
+     * Change color of folder names and saved items names
+     * @param mainFont color of main font
+     */
+    _self.changeMainFontColor = function(mainFont){
+        if(mainFont){
+            $('.folderInfo').find('b').css("color", mainFont)
+            $('.folderInfo').find('p').css("color", mainFont)
+            colorTheme.mainFont = mainFont;
+        }
+    }
+
+    _self.changeTitleFontColor = function(titleFont){
+        if(titleFont){
+            $('#title').css("color", titleFont)
+            colorTheme.titleFont = titleFont;
+        }
+    }
+
+    _self.changeSecondaryFontColor = function(secondaryFont, hoverFont){
+        if(secondaryFont && hoverFont){
+            colorTheme.secondaryFont = secondaryFont;
+            colorTheme.hoverFont = hoverFont;
+            $('#createFolder').css("color", secondaryFont)
+            $('#createFolder').on("mouseenter", function(){
+                $(this).css("color", hoverFont)
+            }).on("mouseleave", function(){
+                $(this).css("color",secondaryFont)
+            })
+
+        }
+    }
+
+    _self.changeButtonColors = function(color, hoverColor){
+        if(color && hoverColor){
+            $('.closebtn').css("color", color)
+            $('.closebtn').on("mouseenter", function(){
+                $(this).css("color", hoverColor)
+            }).on("mouseleave", function(){
+                $(this).css("color", color)
+            })
+            colorTheme.buttonColor = color;
+            colorTheme.buttonHoverColor = hoverColor;
+        }
+    }
+
+    _self.changeDeleteButtonColor = function(color, hoverColor){
+            colorTheme.deleteColor = color;
+            colorTheme.deleteHoverColor = hoverColor;
+    }
 
     //TODO: add assemblage in another page
     /*_self.recreateAssemblage = function(){
@@ -482,38 +769,10 @@ function assemble() {
         $("." + buttonClass).on("click", function() {closeNav(); openMainNav(); return false;});
     }
 
-    //functions for handling dragging
-
-
-    // _self.ondragover = function(event) {
-    //     event.preventDefault();
-    // };
-    //
-    // _self.onDrop = function (event) {
-    //     const id = event
-    //         .dataTransfer
-    //         .getData('text');
-    // };
-
+    _self.getFolders = function(){
+        return _self.folders;
+    }
 
 
     return _self;
 }
-//
-// function allowDrop(ev) {
-//     ev.preventDefault();
-// }
-//
-// function drag(ev) {
-//     ev.dataTransfer.setData("text", ev.target.id);
-// }
-//
-// function drop(ev) {
-//     ev.preventDefault();
-//     const data = ev.dataTransfer.getData("text");
-//     const nodeCopy = document.getElementById(data).cloneNode(true);
-//     nodeCopy.id = "newId"; /* We cannot use the same ID */
-//     ev.target.appendChild(nodeCopy);
-// }
-
-

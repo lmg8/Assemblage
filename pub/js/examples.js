@@ -4,8 +4,19 @@ log('----------')
 log('SCRIPT: Examples of using our libraries')
 
 const e = assemble();
-e.createAssemblage();
+e.createAssemblage({title: "Developer Title"});
 e.openDrawer("openDrawer");
+/*
+e.changeBackgroundColor("white")
+e.changeHeaderBackgroundColor("gray");
+e.changeFolderBackgroundColor("pink");
+e.changeMainFontColor("blue");
+e.changeTitleFontColor("green")
+e.changeSecondaryFontColor("blue", "white");
+e.changeButtonColors("black", "white")
+*/
+
+
 
 // show the given page, hide the rest... use only for multiple pages in one html
 function show(elementID) {
