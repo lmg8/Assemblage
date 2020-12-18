@@ -12,6 +12,9 @@
     <!-- Then we load a script that depends on our libraries (and jQuery) -->
     <script defer type="text/javascript" src='./js/examples.js'></script>
 
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.1/styles/monokai-sublime.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.1/highlight.min.js"></script>
 </head>
 
 <body>
@@ -67,7 +70,39 @@
             dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor
             sit amet,
         </div>
+        <div id="myBlock">
+        <pre><code class="javascript">
+         _self.createAssemblage = function(settings){
+            const drawer = $('&lt;div&gt;&lt;/div&gt;', {id: "mySidenav", class: 'sidenav'});
+
+            if(settings.position === "right" ) {
+                drawer.css(settings.position, 0);
+                set.value = settings.position
+            } else {
+                drawer.css("left", 0)
+            }
+
+            if(settings.title){
+                //accept only up to 22 characters
+                if(settings.title.length > 22) {
+                    set.title = settings.title.slice(0, -(settings.title.length - 22));
+                } else{
+                    set.title = settings.title
+                }
+            }
+            if(settings.width){
+                set.width = settings.width;
+            }
+
+            $('body').append(drawer)
+            addHeader();
+
+            $('#createFolder').on("click", function() {createNewFolder(); return false;});
+        }
+        </code></pre>
+        </div>
     </div>
+
 
 
 

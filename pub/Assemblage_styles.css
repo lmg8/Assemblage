@@ -134,7 +134,7 @@
     display: inline-block;
     margin-top: 10px;
     margin-bottom: 0;
-    width:93%;
+    width:80%;
     overflow:hidden;
     white-space:nowrap;
     text-overflow: ellipsis;
@@ -214,4 +214,32 @@
     color: #bbb;
     cursor: pointer;
     text-decoration: none;
+}
+
+#editBtn{
+    color: #ca3e47;
+    float:right;
+    font-size:25px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+#editBtn:hover,
+#editBtn:focus {
+    color: #bbb;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+#saveBtn{
+    color:#ca3e47;
+    background-color: transparent;
+    cursor: pointer;
+    position:absolute;
+    top:60px;
+    right:9px;
+    font-weight: bold;
+    padding-top:8px;
+    padding-bottom:8px;
+    border-style : hidden;
 }

@@ -424,17 +424,36 @@ function assemble() {
 
         //update item name to first
         const folderName = $('<h4>').append($('<b>').text(`${item.name}`));
-        //if developer changes main font color
-        if(colorTheme.mainFont){
-            folderName.css("color", colorTheme.mainFont)
-        }
+
+
+
+        //update folder name in _self.folders and DOM
+        /*editName.on("input", function() {
+            //_self.folders.filter((f) => f.id === id)[0].name = this.value;
+            console.log(this.value)
+            $('#'+ item.id  +' b').text(this.value);
+        });*/
+
 
         const deleteButton = $('<object></object>').append(
             $('<a></a>', {href: "javascript:void(0)", id: "deleteBtn"})
                 .html('&#128465;'));
+
+        const editNameButton = $('<object></object>').append(
+            $('<a></a>', {href: "javascript:void(0)", id: "editBtn"})
+                .html('&#9998;'));
+
+        //Change color of delete button and save button if developer sets default
         if(colorTheme.deleteColor && colorTheme.deleteHoverColor) {
             deleteButton.css("color", colorTheme.deleteColor)
             deleteButton.on("mouseenter", function () {
+                $(this).css("color", colorTheme.deleteHoverColor)
+            }).on("mouseleave", function () {
+                $(this).css("color", colorTheme.deleteColor)
+            })
+
+            editNameButton.css("color", colorTheme.deleteColor);
+            editNameButton.on("mouseenter", function () {
                 $(this).css("color", colorTheme.deleteHoverColor)
             }).on("mouseleave", function () {
                 $(this).css("color", colorTheme.deleteColor)
@@ -451,13 +470,93 @@ function assemble() {
 
         folderInformation.append(folderName);
 
+        //when edit name button clicked, allow user to edit name
+        editNameButton.on("click",function(e){
+            const editName = $('<input>', {id: `${item.id}NAME`, type: 'text', value:`${item.name}`});
+
+            //edit css of folder name
+            editName.css({
+                'padding' : '8px 8px 8px 0px',
+                'text-decoration' : 'none',
+                'font-weight' : 'bold',
+                'color' : 'white',
+                'height' : '15px',
+                'width' : '60%',
+                'position' : 'absolute',
+                'top' : '60px',
+                'left' : '-6px',
+                'margin-left' : '38px',
+                'margin-top' : '0',
+                'border-style' : 'hidden',
+                'background' : '#313131',
+                'text-overflow' : 'ellipsis',
+                'display': 'block'
+            });
+
+            const saveButton = $('<button>', {href: "javascript:void(0)", id: "saveBtn"}).html('&#128190; SAVE');
+
+            //if developer changes color
+            if(colorTheme.secondaryFont){
+                editName.css("color", colorTheme.secondaryFont)
+                saveButton.css("color", colorTheme.secondaryFont)
+            }
+            if(colorTheme.headerBackground){
+                editName.css("background",colorTheme.headerBackground)
+            }
+
+            editName.on("click", function(){
+                if (!e) {let e = window.event;
+                    e.cancelBubble = true;}
+                if (e.stopPropagation) e.stopPropagation();
+            })
+
+            $( document ).ready(function() {
+                editName.focus();
+            });
+            editName.focus(function() {
+                $(this).select();
+            });
+            editName.blur(function(){
+
+                _self.folders.filter((f) => f.id === folderID)[0].items
+                    .filter((i)=>i.id === item.id)[0].name = $('#'+ item.id  +' input').val();
+                //update DOM with new Saved Item Name
+                $('#'+ item.id  +' b').text($('#'+ item.id  +' input').val());
+                $('#'+ item.id  +' input').remove();
+                $('#saveBtn').remove();
+            })
+            folder.append(editName);
+            folder.append(saveButton);
+            //stop click from propagating
+            if (!e) {let e = window.event;
+                e.cancelBubble = true;}
+            if (e.stopPropagation) e.stopPropagation();
+
+            saveButton.on("click", function(e){
+
+                //update item object name
+                _self.folders.filter((f) => f.id === folderID)[0].items
+                    .filter((i)=>i.id === item.id)[0].name = $('#'+ item.id  +' input').val();
+                 //update DOM with new Saved Item Name
+                $('#'+ item.id  +' b').text($('#'+ item.id  +' input').val());
+                $('#'+ item.id  +' input').remove();
+                $('#saveBtn').remove();
+            })
+        })
+
+
         clickFolder.append(deleteButton);
+        clickFolder.append(editNameButton);
         clickFolder.append(folderInformation);
         deleteButton.css("display", "none")
+        editNameButton.css("display", "none")
+
         clickFolder.on("mouseenter", function(){
-            deleteButton.css("display", "block")
+            deleteButton.css("display", "inline")
+            editNameButton.css("display", "inline")
         }).on("mouseleave", function(){
             deleteButton.css("display", "none")
+            editNameButton.css("display", "none")
         })
         folder.append(clickFolder)
 

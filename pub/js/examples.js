@@ -4,7 +4,7 @@ log('----------')
 log('SCRIPT: Examples of using our libraries')
 
 const e = assemble();
-e.createAssemblage({title: "Developer Title"});
+e.createAssemblage({title: "Developer Title", width:"500px", position:"right"});
 e.openDrawer("openDrawer");
 /*
 e.changeBackgroundColor("white")
@@ -36,3 +36,8 @@ function show(elementID) {
     // then show the requested page
     ele.style.display = 'block';
 }
+
+hljs.initHighlightingOnLoad();
+$(document).ready(function() {
+    $('#myBlock').each(function(i, e) {hljs.highlightBlock(e)});
+});
