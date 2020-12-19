@@ -64,7 +64,7 @@ function assemble() {
             e.preventDefault();
             if(e.target == LinkGrabber.textarea) {
                 LinkGrabber.evt_got_link(e.dataTransfer.getData('URL'));
-                console.log(e.dataTransfer.getData('URL'))
+                //console.log(e.dataTransfer.getData('URL'))
             } else{
                 LinkGrabber.detach_ta()
             }
@@ -327,12 +327,12 @@ function assemble() {
             $('<a></a>', {href: "javascript:void(0)", id: "deleteBtn"})
                 .html('&#128465;'));
 
-        if(colorTheme.deleteColor && colorTheme.deleteHoverColor) {
-            deleteButton.css("color", colorTheme.deleteColor)
-            deleteButton.on("mouseenter", function () {
-                $(this).css("color", colorTheme.deleteHoverColor)
+        if(colorTheme.secondaryButtonColor && colorTheme.secondaryHoverColor) {
+            deleteButton.find('#deleteBtn').css("color", colorTheme.secondaryButtonColor)
+            deleteButton.find('#deleteBtn').on("mouseenter", function () {
+                $(this).css("color", colorTheme.secondaryHoverColor)
             }).on("mouseleave", function () {
-                $(this).css("color", colorTheme.deleteColor)
+                $(this).css("color", colorTheme.secondaryButtonColor)
             })
         }
 
@@ -372,7 +372,6 @@ function assemble() {
         //remove folder from DOM
         $("#"+ folderObj.id).remove();
 
-        //remove folder from list of folders
         _self.folders = _self.folders.filter( obj => obj.id !== folderObj.id);
     }
 
@@ -389,14 +388,11 @@ function assemble() {
         let item;
         //get url path name and use it as name
         if(link) {
-            console.log("this is a link")
             const url = new URL(link);
             const name = url.pathname + url.hash;
 
             item = new Item(name, link, link);
-            if(link.match(/\.(jpeg|jpg|gif|png)$/) != null) {
-                createImageModal(item.id, link); //create invisible modal of image saved and put it in folder
-            }
+
         } else {
 
             //get first text and name the item this
@@ -417,6 +413,12 @@ function assemble() {
         //if developer changes folder background color
         if(colorTheme.folderBackground){
             folder.css("background-color", colorTheme.folderBackground)
+        }
+
+        if (link){
+            if(link.match(/\.(jpeg|jpg|gif|png)$/) != null) {
+                createImageModal(item.id, link); //create invisible modal of image saved and put it in folder
+            }
         }
 
 
@@ -477,19 +479,19 @@ function assemble() {
                 .html('&#9998;'));
 
         //Change color of delete button and save button if developer sets default
-        if(colorTheme.deleteColor && colorTheme.deleteHoverColor) {
-            deleteButton.css("color", colorTheme.deleteColor)
-            deleteButton.on("mouseenter", function () {
-                $(this).css("color", colorTheme.deleteHoverColor)
+        if(colorTheme.secondaryButtonColor && colorTheme.secondaryHoverColor) {
+            deleteButton.find('#deleteBtn').css("color", colorTheme.secondaryButtonColor)
+            deleteButton.find('#deleteBtn').on("mouseenter", function () {
+                $(this).css("color", colorTheme.secondaryHoverColor)
             }).on("mouseleave", function () {
-                $(this).css("color", colorTheme.deleteColor)
+                $(this).css("color", colorTheme.secondaryButtonColor)
             })
 
-            editNameButton.css("color", colorTheme.deleteColor);
-            editNameButton.on("mouseenter", function () {
-                $(this).css("color", colorTheme.deleteHoverColor)
+            editNameButton.find('#editBtn').css("color", colorTheme.secondaryButtonColor);
+            editNameButton.find('#editBtn').on("mouseenter", function () {
+                $(this).css("color", colorTheme.secondaryHoverColor)
             }).on("mouseleave", function () {
-                $(this).css("color", colorTheme.deleteColor)
+                $(this).css("color", colorTheme.secondaryButtonColor)
             })
         }
 
@@ -512,7 +514,7 @@ function assemble() {
                 'padding' : '8px 8px 8px 0px',
                 'text-decoration' : 'none',
                 'font-weight' : 'bold',
-                'color' : 'white',
+                'color' : '#ff6768',
                 'height' : '15px',
                 'width' : '60%',
                 'position' : 'absolute',
@@ -604,19 +606,19 @@ function assemble() {
     }
 
     function deleteItem(folderID, itemID){
-        console.log(folderID + " " + itemID)
+        //console.log(folderID + " " + itemID)
         $('#' + itemID).remove();
 
         //remove item from folder Objs
         const indexToDelete = _self.folders.findIndex(obj => obj.id === folderID);
-        console.log(indexToDelete);
+        //console.log(indexToDelete);
         _self.folders[indexToDelete].items.splice(_self.folders[indexToDelete].items.findIndex(obj => obj.id === itemID),1)
 
         //update number of items in folder DOM
         $('#'+ folderID +' p').text(`${_self.folders[indexToDelete].items.length} items`);
     }
 
-    function createImageModal(folderID, link){
+    function createImageModal(itemID, link){
         const modal = $('<div>', {class:"modal"});
         const closebtn = $('<span>', {class: "closebutton"}).html('&times;');
         closebtn.on("click", function(){
@@ -626,10 +628,8 @@ function assemble() {
         image.attr("src", link);
         modal.append(closebtn, image);
         //console.log(folderID);
-        $('#' + folderID).append(modal);
+        $('#' + itemID).append(modal);
     }
-
-
 
     function openFolder(id) {
         hideMainDrawer();
@@ -676,7 +676,7 @@ function assemble() {
 
     /*allowed to use and access by developer***************************************************************************/
     const _self = {};
-    _self.folders = [new Folder("Sample Folder")]
+    _self.folders = []
     const set = {value: "left", title: "Assemblage", width: "350px"}
 
     //create first assemblage drawer to page
@@ -769,7 +769,7 @@ function assemble() {
         }
     }
 
-    _self.changeButtonColors = function(color, hoverColor){
+    _self.changeButtonColor = function(color, hoverColor){
         if(color && hoverColor){
             $('.closebtn').css("color", color)
             $('.closebtn').on("mouseenter", function(){
@@ -782,9 +782,9 @@ function assemble() {
         }
     }
 
-    _self.changeDeleteButtonColor = function(color, hoverColor){
-            colorTheme.deleteColor = color;
-            colorTheme.deleteHoverColor = hoverColor;
+    _self.changeSecondaryButtonColor = function(color, hoverColor){
+            colorTheme.secondaryButtonColor = color;
+            colorTheme.secondaryHoverColor = hoverColor;
     }
 
     //TODO: add assemblage in another page

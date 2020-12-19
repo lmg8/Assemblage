@@ -4,17 +4,17 @@ log('----------')
 log('SCRIPT: Examples of using our libraries')
 
 const e = assemble();
-e.createAssemblage({title: "Developer Title", width:"500px", position:"right"});
+//recommended min width is 300px
+e.createAssemblage({title: "Developer Title", width:"350px", position:"left"});
 e.openDrawer("openDrawer");
-/*
 e.changeBackgroundColor("white")
 e.changeHeaderBackgroundColor("gray");
 e.changeFolderBackgroundColor("pink");
 e.changeMainFontColor("blue");
 e.changeTitleFontColor("green")
-e.changeSecondaryFontColor("blue", "white");
-e.changeButtonColors("black", "white")
-*/
+e.changeButtonColor("black", "white")
+e.changeSecondaryFontColor("red", "white");
+e.changeSecondaryButtonColor("red", "white")
 
 
 
