@@ -45,7 +45,7 @@ function assemble() {
         evt_got_link: function(link){
             // alert(link);
             if(LinkGrabber.isUrl(link)){
-                displayNewSaveUrl(LinkGrabber.folder, link);
+                displayNewItem(LinkGrabber.folder.slice(0, -4), link);
             } else {
                 alert("not a url");
             }
@@ -267,7 +267,7 @@ function assemble() {
             })
         }
         savePage.on("click", function(){
-            displayNewSave(id);
+            displayNewItem(id);
             return false;
         })
 
@@ -377,63 +377,96 @@ function assemble() {
     }
 
     /**
-     * This is to show new saved item when user clicks "Save current page"
+     * This is to show new saved item
      * @param folderID id of the folder to save new item to
+     * @param link takes user to this link when saved item is clicked.
      */
-    function displayNewSave(folderID){
+    function displayNewItem(folderID, link){
         //TODO: add ability to edit name
 
 
         //TODO: change this to actually save link, not hash
+        let item;
+        //get url path name and use it as name
+        if(link) {
+            console.log("this is a link")
+            const url = new URL(link);
+            const name = url.pathname + url.hash;
 
-        //get first text and name the item this
-        let name = $($(location).attr('hash').toString()).contents().first().text().toString();
-        if(name === '') {
-            name = 'Main Page';
+            item = new Item(name, link, link);
+            if(link.match(/\.(jpeg|jpg|gif|png)$/) != null) {
+                createImageModal(item.id, link); //create invisible modal of image saved and put it in folder
+            }
+        } else {
+
+            //get first text and name the item this
+            let name = $($(location).attr('hash').toString()).contents().first().text().toString();
+            if(name === '') {
+                name = 'Main Page';
+            }
+
+            item = new Item(name,$(location).attr('hash').toString(), "");
+            //console.log(_self.folders);
+            //store image
+            // $($(location).attr('hash').toString()+'img').first();
         }
 
-        const item = new Item(name,$(location).attr('hash').toString(), "");
-        //console.log(_self.folders);
-        //store image
-        // $($(location).attr('hash').toString()+'img').first();
-
         const folder = $('<div></div>', {class: "folder", id: `${item.id}`});
+        //console.log(folderID);
+        $('#' + folderID + 'PAGE').find('.savedItems').append(folder);
         //if developer changes folder background color
         if(colorTheme.folderBackground){
             folder.css("background-color", colorTheme.folderBackground)
         }
-        //console.log(folderID);
-        $('#' + folderID + 'PAGE').find('.savedItems').append(folder);
+
 
         const clickFolder = $('<a></a>', {href: `${item.link}`});
         //check if link saved is not main page
-        if(item.link !== "") {
-            clickFolder.on("click", function(){
-                //update this to show actual link not hash
-                show(item.link);
-            })
+        if(link){
+            if(item.link !== "") {
+                clickFolder.on("click", function(){
+                    //update this to show actual link not hash
+                    if(link.match(/\.(jpeg|jpg|gif|png)$/) != null){
+                        //if image then show
+                        $('#' + item.id + " .modal").css("display", "block");
+                        return false;
+                    } else {
+                        show(`${url.hash}`);
+                        return true;
+                    }
+                })
+            } else {
+                clickFolder.attr("href", '#');
+                clickFolder.on("click", function(){
+                    //show main page
+                    show('');
+                })
+            }
         } else {
-            clickFolder.attr("href", '#');
-            clickFolder.on("click", function(){
-                //show main page
-                show('');
-            })
+            if(item.link !== "") {
+                clickFolder.on("click", function(){
+                    //update this to show actual link not hash
+                    show(item.link);
+                })
+            } else {
+                clickFolder.attr("href", '#');
+                clickFolder.on("click", function(){
+                    //show main page
+                    show('');
+                })
+            }
+
         }
+
 
         const folderInformation = $('<div></div>', {class: "folderInfo"});
 
         //update item name to first
         const folderName = $('<h4>').append($('<b>').text(`${item.name}`));
-
-
-
-        //update folder name in _self.folders and DOM
-        /*editName.on("input", function() {
-            //_self.folders.filter((f) => f.id === id)[0].name = this.value;
-            console.log(this.value)
-            $('#'+ item.id  +' b').text(this.value);
-        });*/
-
+        //if developer changes main font color
+        if(colorTheme.mainFont){
+            folderName.css("color", colorTheme.mainFont)
+        }
 
         const deleteButton = $('<object></object>').append(
             $('<a></a>', {href: "javascript:void(0)", id: "deleteBtn"})
@@ -537,7 +570,7 @@ function assemble() {
                 //update item object name
                 _self.folders.filter((f) => f.id === folderID)[0].items
                     .filter((i)=>i.id === item.id)[0].name = $('#'+ item.id  +' input').val();
-                 //update DOM with new Saved Item Name
+                //update DOM with new Saved Item Name
                 $('#'+ item.id  +' b').text($('#'+ item.id  +' input').val());
                 $('#'+ item.id  +' input').remove();
                 $('#saveBtn').remove();
@@ -561,123 +594,22 @@ function assemble() {
         folder.append(clickFolder)
 
         //save item to object
-        const currentFolder =  _self.folders.filter((f) => f.id === folderID)[0]
+        let currentFolder;
+        currentFolder =  _self.folders.filter((f) => f.id === folderID)[0]
         currentFolder.items.push(item);
 
         //update length in main drawer
         $('#'+ folderID +' p').text(`${currentFolder.items.length} items`);
-
-    }
-
-    /**
-     * This is to show new saved item when user drags and drops a link to folder
-     * @param folderID id of folder to save new item to
-     * @param link takes user to this link when saved item is clicked.
-     */
-    function displayNewSaveUrl(folderID, link) {
-        //TODO: add ability to edit name
-
-
-        //TODO: change this to actually save link, not hash
-
-        //get url path name and use it as name
-        const url = new URL(link);
-        const name = url.pathname + url.hash;
-
-        const item = new Item(name, link, link);
-
-
-
-        const folder = $('<div></div>', {class: "folder", id: `${item.id}`});
-        $('#' + folderID).find('.savedItems').append(folder);
-
-        if(colorTheme.folderBackground){
-            folder.css("background-color", colorTheme.folderBackground)
-        }
-
-        //check if link is image url {
-        if(link.match(/\.(jpeg|jpg|gif|png)$/) != null) {
-            createImageModal(item.id, link); //create invisible modal of image saved and put it in folder
-        }
-        const clickFolder = $('<a></a>', {href: `${item.link}`});
-        //check if link saved is not main page
-        if(item.link !== "") {
-            clickFolder.on("click", function(){
-                //update this to show actual link not hash
-                if(link.match(/\.(jpeg|jpg|gif|png)$/) != null){
-                    //if image then show
-                    $('#' + item.id + " .modal").css("display", "block");
-                    return false;
-                } else {
-                    show(`${url.hash}`);
-                    return true;
-                }
-            })
-        } else {
-            clickFolder.attr("href", '#');
-            clickFolder.on("click", function(){
-                //show main page
-                show('');
-            })
-        }
-
-        const folderInformation = $('<div></div>', {class: "folderInfo"});
-
-        //update item name to first
-        const folderName = $('<h4>').append($('<b>').text(`${item.name}`));
-        //if developer changes main font color
-        if(colorTheme.mainFont){
-            folderName.css("color", colorTheme.mainFont)
-        }
-
-        const deleteButton = $('<object></object>').append(
-            $('<a></a>', {href: "javascript:void(0)", id: "deleteBtn"})
-                .html('&#128465;'));
-        if(colorTheme.deleteColor && colorTheme.deleteHoverColor) {
-            deleteButton.css("color", colorTheme.deleteColor)
-            deleteButton.on("mouseenter", function () {
-                $(this).css("color", colorTheme.deleteHoverColor)
-            }).on("mouseleave", function () {
-                $(this).css("color", colorTheme.deleteColor)
-            })
-        }
-
-        deleteButton.on("click",function(e){
-            deleteItem(folderID, item.id)
-            //stop click from propagating
-            if (!e) {let e = window.event;
-                e.cancelBubble = true;}
-            if (e.stopPropagation) e.stopPropagation();
-        })
-
-        folderInformation.append(folderName);
-
-        clickFolder.append(deleteButton);
-        clickFolder.append(folderInformation);
-        deleteButton.css("display", "none")
-        clickFolder.on("mouseenter", function(){
-            deleteButton.css("display", "block")
-        }).on("mouseleave", function(){
-            deleteButton.css("display", "none")
-        })
-        folder.append(clickFolder)
-
-        //save item to object
-        const currentFolder =  _self.folders.filter((f) => f.id === folderID.slice(0, -4))[0]
-        currentFolder.items.push(item);
-
-        //update length in main drawer
-        console.log(currentFolder.items.length)
-        $('#'+ folderID +' p').text(`${currentFolder.items.length} items`);
-        console.log(currentFolder)
 
     }
 
     function deleteItem(folderID, itemID){
+        console.log(folderID + " " + itemID)
         $('#' + itemID).remove();
 
         //remove item from folder Objs
         const indexToDelete = _self.folders.findIndex(obj => obj.id === folderID);
+        console.log(indexToDelete);
         _self.folders[indexToDelete].items.splice(_self.folders[indexToDelete].items.findIndex(obj => obj.id === itemID),1)
 
         //update number of items in folder DOM
