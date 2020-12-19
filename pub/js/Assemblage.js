@@ -100,10 +100,10 @@ function assemble() {
     };
 
     class Folder {
-        constructor(name) {
-            this.name = name;
-            this.id = '_' + Math.random().toString(36).substr(2, 9); //random id generated
-            this.items = [] //items saved
+        constructor(options = {}) {
+            this.name = options.name;
+            this.id = options.id || '_' + Math.random().toString(36).substr(2, 9); //random id generated
+            this.items = options.items || [] //items saved
         }
     }
 
@@ -113,11 +113,11 @@ function assemble() {
          * @param link  link to item
          * @param img   image used to show in DOM
          */
-        constructor(name, link, img){
-            this.name = name; //name of item, edited by user.
-            this.id = 'item_' + Math.random().toString(36).substr(2, 9); //random id generated
-            this.link = link;
-            this.img = img;
+        constructor(options = {}){
+            this.name = options.name; //name of item, edited by user.
+            this.id = options.id || 'item_' + Math.random().toString(36).substr(2, 9); //random id generated
+            this.link = options.link || null;
+            this.hash = options.hash || null;
         }
     }
 
@@ -176,17 +176,18 @@ function assemble() {
     }
 
     function createNewFolder(){
-        const newFolder = new Folder("New folder");
+        const newFolder = new Folder({name: "New folder"});
         //add to folders
         _self.folders.push(newFolder);
         displayNewFolderPage(newFolder);
+
+        //TODO: save to local storage
+        localStorage.setItem('AssemblageFolder', JSON.stringify(_self.folders))
     }
 
     function displayNewFolderPage(newFolder){
 
         hideMainDrawer();
-        //TODO: change id to created id
-        //https://stackoverflow.com/questions/48239/getting-the-id-of-the-element-that-fired-an-event
         const newFolderPage = $('<div></div>', {id: `${newFolder.id}PAGE`, class: 'sidenav'});
 
         newFolderPage.css( set.value,"0")
@@ -200,6 +201,20 @@ function assemble() {
         openNav(newFolderPage.attr("id"));
         LinkGrabber.start(newFolderPage.attr("id"));
         displayNewFolder(newFolder);
+    }
+
+    function generateFolders(folder){
+        const newFolderPage = $('<div></div>', {id: `${folder.id}PAGE`, class: 'sidenav'});
+
+        newFolderPage.css( set.value,"0")
+
+        $('body').append(newFolderPage);
+        //if developer changed background color
+        if(colorTheme.background){
+            $('.sidenav').css("background-color", colorTheme.background)
+        }
+        addFolderHeader(folder.id, folder.name);
+        displayNewFolder(folder);
     }
 
     function addFolderHeader(id, name) {
@@ -217,8 +232,8 @@ function assemble() {
             'width' : '70%',
             'position' : 'absolute',
             'top' : '13px',
-            'left' : '0',
-            'margin-left' : '38px',
+            'left' : '38px',
+            'margin-left' : '0',
             'margin-top' : '0',
             'border-style' : 'hidden',
             'background' : 'transparent',
@@ -236,25 +251,27 @@ function assemble() {
             $(this).css("background", "transparent");
         })
 
-        const backButton =  $('<a></a>', {href: "#", class: "backbtn"}).html('&#8249;');
+        const backButton =  $('<a></a>', {href: "javascript:void(0)", class: "backbtn"}).html('&#8249;');
         backButton.on("click", function() {closeNav(); openMainNav(); return false});
 
         const exitButton = $('<a></a>', {href: "javascript:void(0)", class: "closebtn"}).html('&times;');
         exitButton.on("click", function() {closeNav()});
 
-        if(colorTheme.buttonColor && colorTheme.buttonHoverColor){
-            exitButton.css("color", colorTheme.buttonColor)
+        if(colorTheme.buttonColor !== "" && colorTheme.buttonHoverColor !== ""){
+            exitButton.css("color", colorTheme.buttonColor);
             exitButton.on("mouseenter", function(){
                 $(this).css("color", colorTheme.buttonHoverColor)
             }).on("mouseleave", function(){
                 $(this).css("color",colorTheme.buttonColor)
-            })
-            backButton.css("color", colorTheme.buttonColor)
+            });
+            console.log("here")
+            backButton.css("color", colorTheme.buttonColor);
             backButton.on("mouseenter", function(){
                 $(this).css("color", colorTheme.buttonHoverColor)
             }).on("mouseleave", function(){
                 $(this).css("color",colorTheme.buttonColor)
-            })
+            });
+            console.log("here")
         }
 
         const savePage = $('<a></a>', {href: "#", id: "createFolder"}).html('&plus; Save current page');
@@ -276,7 +293,7 @@ function assemble() {
         if(colorTheme.headerBackground){
             header.css("background-color", colorTheme.headerBackground)
         }
-        header.append(backButton, folderName, exitButton, savePage);
+        header.append(folderName, backButton, exitButton, savePage);
 
         const savedItems = $('<div></div>', {class: 'savedItems'});
 
@@ -297,6 +314,8 @@ function assemble() {
             _self.folders.filter((f) => f.id === id)[0].name = this.value;
             $('#'+ id +' b').text(_self.folders.filter((f) => f.id === id)[0].name);
         });
+        //TODO: update local storage
+        localStorage.setItem('AssemblageFolder', JSON.stringify(_self.folders))
 
     }
 
@@ -373,25 +392,26 @@ function assemble() {
         $("#"+ folderObj.id).remove();
 
         _self.folders = _self.folders.filter( obj => obj.id !== folderObj.id);
+        //TODO: update local storage
+        localStorage.setItem('AssemblageFolder', JSON.stringify(_self.folders))
     }
 
     /**
      * This is to show new saved item
      * @param folderID id of the folder to save new item to
+     * @param hashLink
      * @param link takes user to this link when saved item is clicked.
      */
     function displayNewItem(folderID, link){
-        //TODO: add ability to edit name
 
 
-        //TODO: change this to actually save link, not hash
         let item;
         //get url path name and use it as name
         if(link) {
             const url = new URL(link);
             const name = url.pathname + url.hash;
 
-            item = new Item(name, link, link);
+            item = new Item({name: name, link: link});
 
         } else {
 
@@ -401,7 +421,7 @@ function assemble() {
                 name = 'Main Page';
             }
 
-            item = new Item(name,$(location).attr('hash').toString(), "");
+            item = new Item({name: name, hash: $(location).attr('hash').toString()});
             //console.log(_self.folders);
             //store image
             // $($(location).attr('hash').toString()+'img').first();
@@ -415,20 +435,19 @@ function assemble() {
             folder.css("background-color", colorTheme.folderBackground)
         }
 
-        if (link){
-            if(link.match(/\.(jpeg|jpg|gif|png)$/) != null) {
-                createImageModal(item.id, link); //create invisible modal of image saved and put it in folder
+        if (item.link){
+            if(item.link.match(/\.(jpeg|jpg|gif|png)$/) != null) {
+                createImageModal(item.id, item.link); //create invisible modal of image saved and put it in folder
             }
         }
 
-
-        const clickFolder = $('<a></a>', {href: `${item.link}`});
-        //check if link saved is not main page
-        if(link){
+        let clickFolder;
+        if(item.link){
+            clickFolder = $('<a></a>', {href: `${item.link}`});
             if(item.link !== "") {
                 clickFolder.on("click", function(){
                     //update this to show actual link not hash
-                    if(link.match(/\.(jpeg|jpg|gif|png)$/) != null){
+                    if(item.link.match(/\.(jpeg|jpg|gif|png)$/) != null){
                         //if image then show
                         $('#' + item.id + " .modal").css("display", "block");
                         return false;
@@ -445,10 +464,12 @@ function assemble() {
                 })
             }
         } else {
-            if(item.link !== "") {
+            clickFolder = $('<a></a>', {href: `${item.hash}`});
+
+            if(item.hash !== "") {
                 clickFolder.on("click", function(){
                     //update this to show actual link not hash
-                    show(item.link);
+                    show(item.hash);
                 })
             } else {
                 clickFolder.attr("href", '#');
@@ -555,6 +576,8 @@ function assemble() {
 
                 _self.folders.filter((f) => f.id === folderID)[0].items
                     .filter((i)=>i.id === item.id)[0].name = $('#'+ item.id  +' input').val();
+                //TODO: update local storage
+                localStorage.setItem('AssemblageFolder', JSON.stringify(_self.folders))
                 //update DOM with new Saved Item Name
                 $('#'+ item.id  +' b').text($('#'+ item.id  +' input').val());
                 $('#'+ item.id  +' input').remove();
@@ -572,6 +595,8 @@ function assemble() {
                 //update item object name
                 _self.folders.filter((f) => f.id === folderID)[0].items
                     .filter((i)=>i.id === item.id)[0].name = $('#'+ item.id  +' input').val();
+                //TODO: update local storage
+                localStorage.setItem('AssemblageFolder', JSON.stringify(_self.folders))
                 //update DOM with new Saved Item Name
                 $('#'+ item.id  +' b').text($('#'+ item.id  +' input').val());
                 $('#'+ item.id  +' input').remove();
@@ -599,10 +624,216 @@ function assemble() {
         let currentFolder;
         currentFolder =  _self.folders.filter((f) => f.id === folderID)[0]
         currentFolder.items.push(item);
-
+        //TODO: update local storage
+        localStorage.setItem('AssemblageFolder', JSON.stringify(_self.folders))
         //update length in main drawer
         $('#'+ folderID +' p').text(`${currentFolder.items.length} items`);
 
+    }
+
+    /**
+     * This is to show items already in folder
+     * @param folderID id of the folder where item is
+     * @param hashLink
+     * @param link takes user to this link when saved item is clicked.
+     */
+    function displayItems(folderID, item){
+
+        const folder = $('<div></div>', {class: "folder", id: `${item.id}`});
+        //console.log(folderID);
+        $('#' + folderID + 'PAGE').find('.savedItems').append(folder);
+        //if developer changes folder background color
+        if(colorTheme.folderBackground){
+            folder.css("background-color", colorTheme.folderBackground)
+        }
+
+        if (item.link){
+            if(item.link.match(/\.(jpeg|jpg|gif|png)$/) != null) {
+                createImageModal(item.id, item.link); //create invisible modal of image saved and put it in folder
+            }
+        }
+
+        let clickFolder;
+        //check if link saved is not main page
+        if(item.link){
+            clickFolder = $('<a></a>', {href: `${item.link}`});
+            if(item.link !== "") {
+                clickFolder.on("click", function(){
+                    //update this to show actual link not hash
+                    if(item.link.match(/\.(jpeg|jpg|gif|png)$/) != null){
+                        //if image then show
+                        $('#' + item.id + " .modal").css("display", "block");
+                        return false;
+                    } else {
+                        show(`${url.hash}`);
+                        return true;
+                    }
+                })
+            } else {
+                clickFolder.attr("href", '#');
+                clickFolder.on("click", function(){
+                    //show main page
+                    show('');
+                })
+            }
+        } else {
+            clickFolder = $('<a></a>', {href: `${item.hash}`});
+
+            if(item.hash !== "") {
+                clickFolder.on("click", function(){
+                    //update this to show actual link not hash
+                    show(item.hash);
+                })
+            } else {
+                clickFolder.attr("href", '#');
+                clickFolder.on("click", function(){
+                    //show main page
+                    show('');
+                })
+            }
+
+        }
+
+
+        const folderInformation = $('<div></div>', {class: "folderInfo"});
+
+        //update item name to first
+        const folderName = $('<h4>').append($('<b>').text(`${item.name}`));
+        //if developer changes main font color
+        if(colorTheme.mainFont){
+            folderName.css("color", colorTheme.mainFont)
+        }
+
+        const deleteButton = $('<object></object>').append(
+            $('<a></a>', {href: "javascript:void(0)", id: "deleteBtn"})
+                .html('&#128465;'));
+
+        const editNameButton = $('<object></object>').append(
+            $('<a></a>', {href: "javascript:void(0)", id: "editBtn"})
+                .html('&#9998;'));
+
+        //Change color of delete button and save button if developer sets default
+        if(colorTheme.secondaryButtonColor && colorTheme.secondaryHoverColor) {
+            deleteButton.find('#deleteBtn').css("color", colorTheme.secondaryButtonColor)
+            deleteButton.find('#deleteBtn').on("mouseenter", function () {
+                $(this).css("color", colorTheme.secondaryHoverColor)
+            }).on("mouseleave", function () {
+                $(this).css("color", colorTheme.secondaryButtonColor)
+            })
+
+            editNameButton.find('#editBtn').css("color", colorTheme.secondaryButtonColor);
+            editNameButton.find('#editBtn').on("mouseenter", function () {
+                $(this).css("color", colorTheme.secondaryHoverColor)
+            }).on("mouseleave", function () {
+                $(this).css("color", colorTheme.secondaryButtonColor)
+            })
+        }
+
+        deleteButton.on("click",function(e){
+            deleteItem(folderID, item.id)
+            //stop click from propagating
+            if (!e) {let e = window.event;
+                e.cancelBubble = true;}
+            if (e.stopPropagation) e.stopPropagation();
+        })
+
+        folderInformation.append(folderName);
+
+        //when edit name button clicked, allow user to edit name
+        editNameButton.on("click",function(e){
+            const editName = $('<input>', {id: `${item.id}NAME`, type: 'text', value:`${item.name}`});
+
+            //edit css of folder name
+            editName.css({
+                'padding' : '8px 8px 8px 0px',
+                'text-decoration' : 'none',
+                'font-weight' : 'bold',
+                'color' : '#ff6768',
+                'height' : '15px',
+                'width' : '60%',
+                'position' : 'absolute',
+                'top' : '60px',
+                'left' : '-6px',
+                'margin-left' : '38px',
+                'margin-top' : '0',
+                'border-style' : 'hidden',
+                'background' : '#313131',
+                'text-overflow' : 'ellipsis',
+                'display': 'block'
+            });
+
+            const saveButton = $('<button>', {href: "javascript:void(0)", id: "saveBtn"}).html('&#128190; SAVE');
+
+            //if developer changes color
+            if(colorTheme.secondaryFont){
+                editName.css("color", colorTheme.secondaryFont)
+                saveButton.css("color", colorTheme.secondaryFont)
+            }
+            if(colorTheme.headerBackground){
+                editName.css("background",colorTheme.headerBackground)
+            }
+
+            editName.on("click", function(){
+                if (!e) {let e = window.event;
+                    e.cancelBubble = true;}
+                if (e.stopPropagation) e.stopPropagation();
+            })
+
+            $( document ).ready(function() {
+                editName.focus();
+            });
+            editName.focus(function() {
+                $(this).select();
+            });
+            editName.blur(function(){
+
+                _self.folders.filter((f) => f.id === folderID)[0].items
+                    .filter((i)=>i.id === item.id)[0].name = $('#'+ item.id  +' input').val();
+                //TODO: update local storage
+                localStorage.setItem('AssemblageFolder', JSON.stringify(_self.folders))
+                //update DOM with new Saved Item Name
+                $('#'+ item.id  +' b').text($('#'+ item.id  +' input').val());
+                $('#'+ item.id  +' input').remove();
+                $('#saveBtn').remove();
+            })
+            folder.append(editName);
+            folder.append(saveButton);
+            //stop click from propagating
+            if (!e) {let e = window.event;
+                e.cancelBubble = true;}
+            if (e.stopPropagation) e.stopPropagation();
+
+            saveButton.on("click", function(e){
+
+                //update item object name
+                _self.folders.filter((f) => f.id === folderID)[0].items
+                    .filter((i)=>i.id === item.id)[0].name = $('#'+ item.id  +' input').val();
+                //TODO: update local storage
+                localStorage.setItem('AssemblageFolder', JSON.stringify(_self.folders))
+                //update DOM with new Saved Item Name
+                $('#'+ item.id  +' b').text($('#'+ item.id  +' input').val());
+                $('#'+ item.id  +' input').remove();
+                $('#saveBtn').remove();
+            })
+        })
+
+
+        clickFolder.append(deleteButton);
+        clickFolder.append(editNameButton);
+        clickFolder.append(folderInformation);
+        deleteButton.css("display", "none")
+        editNameButton.css("display", "none")
+
+        clickFolder.on("mouseenter", function(){
+            deleteButton.css("display", "inline")
+            editNameButton.css("display", "inline")
+        }).on("mouseleave", function(){
+            deleteButton.css("display", "none")
+            editNameButton.css("display", "none")
+        })
+        folder.append(clickFolder)
+
+        //update length in main drawer
     }
 
     function deleteItem(folderID, itemID){
@@ -613,7 +844,8 @@ function assemble() {
         const indexToDelete = _self.folders.findIndex(obj => obj.id === folderID);
         //console.log(indexToDelete);
         _self.folders[indexToDelete].items.splice(_self.folders[indexToDelete].items.findIndex(obj => obj.id === itemID),1)
-
+        //TODO: update local storage
+        localStorage.setItem('AssemblageFolder', JSON.stringify(_self.folders))
         //update number of items in folder DOM
         $('#'+ folderID +' p').text(`${_self.folders[indexToDelete].items.length} items`);
     }
@@ -640,15 +872,39 @@ function assemble() {
 
     function addHeader() {
         const header = $('<div></div>', {class: 'header'});
+        if( colorTheme.headerBackground){
+            header.css("background-color",  colorTheme.headerBackground)
+        }
+
         const drawerBody = $('<div></div>', {class: 'drawerBody'});
         $('#mySidenav').append(header, drawerBody);
 
         const title = $('<h5></h5>', {id: 'title'}).text(`${set.title}`);
+        if(colorTheme.titleFont){
+            title.css("color", colorTheme.titleFont);
+        }
 
         const exitButton = $('<a></a>', {href: "javascript:void(0)", class: "closebtn"}).html('&times;');
         exitButton.on("click", function() {closeNav()});
 
+        if(colorTheme.buttonColor !== "" && colorTheme.buttonHoverColor !== "") {
+            exitButton.css("color", colorTheme.buttonColor);
+            exitButton.on("mouseenter", function () {
+                $(this).css("color", colorTheme.buttonHoverColor)
+            }).on("mouseleave", function () {
+                $(this).css("color", colorTheme.buttonColor)
+            });
+        }
+
         const createFolder = $('<a></a>', {href: "#", id: "createFolder"}).html('&plus; Create new folder');
+        if(colorTheme.secondaryFont !== "" && colorTheme.hoverFont !== "") {
+            createFolder.css("color", colorTheme.secondaryFont);
+            createFolder.on("mouseenter", function () {
+                $(this).css("color", colorTheme.hoverFont)
+            }).on("mouseleave", function () {
+                $(this).css("color", colorTheme.secondaryFont)
+            });
+        }
 
         $('.header').append(title, exitButton, createFolder);
     }
@@ -740,7 +996,7 @@ function assemble() {
      * Change color of folder names and saved items names
      * @param mainFont color of main font
      */
-    _self.changeMainFontColor = function(mainFont){
+    _self.changeFolderFontColor = function(mainFont){
         if(mainFont){
             $('.folderInfo').find('b').css("color", mainFont)
             $('.folderInfo').find('p').css("color", mainFont)
@@ -769,10 +1025,17 @@ function assemble() {
         }
     }
 
-    _self.changeButtonColor = function(color, hoverColor){
+    _self.changeHeaderButtonColor = function(color, hoverColor){
         if(color && hoverColor){
             $('.closebtn').css("color", color)
             $('.closebtn').on("mouseenter", function(){
+                $(this).css("color", hoverColor)
+            }).on("mouseleave", function(){
+                $(this).css("color", color)
+            })
+
+            $('.backbtn').css("color", color)
+            $('.backbtn').on("mouseenter", function(){
                 $(this).css("color", hoverColor)
             }).on("mouseleave", function(){
                 $(this).css("color", color)
@@ -782,7 +1045,7 @@ function assemble() {
         }
     }
 
-    _self.changeSecondaryButtonColor = function(color, hoverColor){
+    _self.changeFolderButtonColor = function(color, hoverColor){
             colorTheme.secondaryButtonColor = color;
             colorTheme.secondaryHoverColor = hoverColor;
     }
@@ -792,6 +1055,7 @@ function assemble() {
 
     }*/
 
+
     /**
      * This will add the ability for the developer to open the drawer using the button they created
      * @param buttonClass the class name of the button created by developer
@@ -800,8 +1064,67 @@ function assemble() {
         $("." + buttonClass).on("click", function() {closeNav(); openMainNav(); return false;});
     }
 
+    /**
+     * Get list of Folder Objects save in localStorage of user
+     * @returns List of Folder Objects
+     */
     _self.getFolders = function(){
-        return _self.folders;
+        return JSON.parse(localStorage.getItem("AssemblageFolder"));
+    }
+
+    /**
+     * Removes List of Folder Objects from localStorage.
+     */
+    _self.clearFolders = function(){
+        localStorage.removeItem("AssemblageFolder");
+    }
+
+    /**
+     * ability for developer to create assemblage with given _self.folders
+     * @param settings Accepts the following settings: {position: "right", title: "Assemblage", width: "350px"}
+     * @param foldersObj
+     */
+    _self.reAssemblage = function(settings, foldersObj){
+        _self.folders = foldersObj;
+        const drawer = $('<div></div>', {id: "mySidenav", class: 'sidenav'});
+
+        if(settings.position === "right" ) {
+            drawer.css(settings.position, 0);
+            set.value = settings.position
+        } else {
+            drawer.css("left", 0)
+        }
+
+        if(settings.title){
+            //accept only up to 22 characters
+            if(settings.title.length > 22) {
+                set.title = settings.title.slice(0, -(settings.title.length - 22));
+            } else{
+                set.title = settings.title
+            }
+        }
+        if(settings.width){
+            set.width = settings.width;
+        }
+
+        $('body').append(drawer)
+        addHeader();
+
+        $('#createFolder').on("click", function() {createNewFolder(); return false;});
+
+        function isUrl(string)
+        {
+            const regex = /(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,63}(:[0-9]{1,5})?(\/.*)?/g;
+            return regex.test(string) ? string.match(regex) : false;
+        };
+
+        _self.folders.forEach(folder => {
+            generateFolders(folder);
+            folder.items.forEach(item => {
+                    displayItems(folder.id, item)
+                }
+            )
+        })
     }
 
 
