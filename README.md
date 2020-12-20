@@ -3,7 +3,7 @@
 Link to landing page: https://protected-citadel-39083.herokuapp.com/
 
 Documentation: https://protected-citadel-39083.herokuapp.com/documentation.html
-###Getting Started
+### Getting Started
 
 Download the library from Github.
 
