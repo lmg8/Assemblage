@@ -88,15 +88,6 @@ function assemble() {
             document.addEventListener("dragover", LinkGrabber.evt_drag_over, false);
             document.addEventListener("drop", LinkGrabber.evt_drop, false);
         },
-
-        /*stop: function(){
-            document.removeEventListener("dragover", LinkGrabber.evt_drag_over);
-            document.removeEventListener("dragenter", LinkGrabber.evt_drag_over);
-
-            document.removeEventListener("mouseup", LinkGrabber.evt_drag_out);
-            document.removeEventListener("dragleave", LinkGrabber.evt_drag_out);
-            LinkGrabber.detach_ta();
-        },*/
     };
 
     class Folder {
@@ -117,7 +108,6 @@ function assemble() {
             this.name = options.name; //name of item, edited by user.
             this.id = options.id || 'item_' + Math.random().toString(36).substr(2, 9); //random id generated
             this.link = options.link || null;
-            this.hash = options.hash || null;
         }
     }
 
@@ -264,14 +254,12 @@ function assemble() {
             }).on("mouseleave", function(){
                 $(this).css("color",colorTheme.buttonColor)
             });
-            console.log("here")
             backButton.css("color", colorTheme.buttonColor);
             backButton.on("mouseenter", function(){
                 $(this).css("color", colorTheme.buttonHoverColor)
             }).on("mouseleave", function(){
                 $(this).css("color",colorTheme.buttonColor)
             });
-            console.log("here")
         }
 
         const savePage = $('<a></a>', {href: "#", id: "createFolder"}).html('&plus; Save current page');
@@ -284,7 +272,7 @@ function assemble() {
             })
         }
         savePage.on("click", function(){
-            displayNewItem(id);
+            displayNewItem(id, window.location.href);
             return false;
         })
 
@@ -452,15 +440,8 @@ function assemble() {
                         $('#' + item.id + " .modal").css("display", "block");
                         return false;
                     } else {
-                        show(`${url.hash}`);
                         return true;
                     }
-                })
-            } else {
-                clickFolder.attr("href", '#');
-                clickFolder.on("click", function(){
-                    //show main page
-                    show('');
                 })
             }
         } else {
@@ -971,55 +952,55 @@ function assemble() {
     //store colors received from developer
     const colorTheme = {};
 
-    _self.changeBackgroundColor = function(background){
-        if(background){
-            $('.sidenav').css("background-color", background)
-            colorTheme.background = background;
+    _self.changeBackgroundColor = function(color){
+        if(color){
+            $('.sidenav').css("background-color", color)
+            colorTheme.background = color;
         }
     }
 
-    _self.changeHeaderBackgroundColor = function(headerBackground){
-        if(headerBackground){
-            $('.header').css("background-color", headerBackground)
-            colorTheme.headerBackground = headerBackground;
+    _self.changeHeaderBackgroundColor = function(color){
+        if(color){
+            $('.header').css("background-color", color)
+            colorTheme.headerBackground = color;
         }
     }
 
-    _self.changeFolderBackgroundColor = function(folderBackground){
-        if(folderBackground){
-            $('.folder').css("background-color", folderBackground)
-            colorTheme.folderBackground = folderBackground;
+    _self.changeFolderBackgroundColor = function(color){
+        if(color){
+            $('.folder').css("background-color", color)
+            colorTheme.folderBackground = color;
         }
     }
 
     /**
      * Change color of folder names and saved items names
-     * @param mainFont color of main font
+     * @param color of main font
      */
-    _self.changeFolderFontColor = function(mainFont){
-        if(mainFont){
-            $('.folderInfo').find('b').css("color", mainFont)
-            $('.folderInfo').find('p').css("color", mainFont)
-            colorTheme.mainFont = mainFont;
+    _self.changeFolderFontColor = function(color){
+        if(color){
+            $('.folderInfo').find('b').css("color", color)
+            $('.folderInfo').find('p').css("color", color)
+            colorTheme.mainFont = color;
         }
     }
 
-    _self.changeTitleFontColor = function(titleFont){
-        if(titleFont){
-            $('#title').css("color", titleFont)
-            colorTheme.titleFont = titleFont;
+    _self.changeTitleFontColor = function(color){
+        if(color){
+            $('#title').css("color", color)
+            colorTheme.titleFont = color;
         }
     }
 
-    _self.changeSecondaryFontColor = function(secondaryFont, hoverFont){
-        if(secondaryFont && hoverFont){
-            colorTheme.secondaryFont = secondaryFont;
-            colorTheme.hoverFont = hoverFont;
-            $('#createFolder').css("color", secondaryFont)
+    _self.changeSecondaryFontColor = function(color, hoverColor){
+        if(color && hoverColor){
+            colorTheme.secondaryFont = color;
+            colorTheme.hoverFont = hoverColor;
+            $('#createFolder').css("color", color)
             $('#createFolder').on("mouseenter", function(){
-                $(this).css("color", hoverFont)
+                $(this).css("color", hoverColor)
             }).on("mouseleave", function(){
-                $(this).css("color",secondaryFont)
+                $(this).css("color",color)
             })
 
         }
@@ -1050,12 +1031,6 @@ function assemble() {
             colorTheme.secondaryHoverColor = hoverColor;
     }
 
-    //TODO: add assemblage in another page
-    /*_self.recreateAssemblage = function(){
-
-    }*/
-
-
     /**
      * This will add the ability for the developer to open the drawer using the button they created
      * @param buttonClass the class name of the button created by developer
@@ -1080,12 +1055,19 @@ function assemble() {
     }
 
     /**
+     * remove Assemblage from DOM
+     */
+    _self.deleteFromDOM = function(){
+        $('#mySidenav').remove();
+    }
+
+    /**
      * ability for developer to create assemblage with given _self.folders
      * @param settings Accepts the following settings: {position: "right", title: "Assemblage", width: "350px"}
-     * @param foldersObj
+     * @param folders list of folder objects
      */
-    _self.reAssemblage = function(settings, foldersObj){
-        _self.folders = foldersObj;
+    _self.reAssemblage = function(settings, folders){
+        _self.folders = folders;
         const drawer = $('<div></div>', {id: "mySidenav", class: 'sidenav'});
 
         if(settings.position === "right" ) {
@@ -1112,19 +1094,13 @@ function assemble() {
 
         $('#createFolder').on("click", function() {createNewFolder(); return false;});
 
-        function isUrl(string)
-        {
-            const regex = /(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,63}(:[0-9]{1,5})?(\/.*)?/g;
-            return regex.test(string) ? string.match(regex) : false;
-        };
-
         _self.folders.forEach(folder => {
             generateFolders(folder);
             folder.items.forEach(item => {
                     displayItems(folder.id, item)
                 }
-            )
-        })
+            );
+        });
     }
 
 

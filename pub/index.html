@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Assemblage</title>
+    <link rel="stylesheet" type="text/css" href="Assemblage_styles.css">
+    <link rel="stylesheet" type="text/css" href="example.css">
+    <!-- First we load jquery from a Google CDN. -->
+    <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Then we load a script that depends on jQuery -->
+    <script defer type="text/javascript" src='./js/Assemblage.js'></script>
+    <!-- Then we load a script that depends on our libraries (and jQuery) -->
+    <script defer type="text/javascript" src='./js/examples.js'></script>
+</head>
+
+<body>
+<div id="main">
+    <h2 style="font-size:40px;" class="center">ASSEMBLAGE DEMO</h2>
+
+    <div class="center">
+        <span style="font-size:30px;cursor:pointer" class="openDrawer">&#9776; Click me to open and create new folder!</span>
+    </div>
+
+    <div class="board">
+        <div class="column" style="text-align: center">
+            <h4>After creating new folder, rename your folder then save the current page by clicking:</h4>
+            <h4 style="color: #ca3e47; font-weight: lighter">&plus; Save current page</h4>
+            <h4>You can also drag these images to created folder to save</h4>
+
+            <a href="./images/sample.jpg" onclick="return false">
+                <img src = "./images/sample.jpg">
+            </a>
+
+            <a href="./images/sample2.jpg" onclick="return false">
+                <img src = "./images/sample2.jpg">
+            </a>
+
+            <a href="./images/sample3.jpg" onclick="return false">
+                <img src = "./images/sample3.jpg">
+            </a>
+        </div>
+    </div>
+
+    <p class="center" style="text-align: center; font-size:18px">
+        * Assemblage allows you to rename &#9998; the items you have saved and delete &#128465; them. <br/>
+        You can also rename and delete &#128465; the folders you have created. <br/>
+    </p>
+    <p class="showAPage center">
+
+        Navigate to one of these pages below and have access to your Assemblage.
+    </p>
+
+    <p class="linksToPages center" style="margin-bottom: 50px">
+
+        <a class="navigationLinks" href="./examples.html">Example 1</a>
+        <a class="navigationLinks" href="./example2.html">Example 2</a>
+    </p>
+
+    <div style="border-top-style: dashed"/>
+        <div class="center" style="margin-top: 50px; margin-bottom: 50px">
+            <a class="navigationLinks" href="documentation.html">Documentation</a>
+        </div>
+        <h3 class="center" style="margin-top: 50px;">Watch the following video to see it in action!</h3>
+        <div class="center" style="margin-top: 10px;">
+
+            <video class="center" width="850" controls >
+                <source src="./images/demo.mp4" type="video/mp4">
+                <source src="./images/demo.mp4" type="video/ogg">
+                Your browser does not support HTML video.
+            </video>
+        </div>
+        <div class="center">
+            <a class="navigationLinks" style="margin-top: 10px" href="./images/demo.mp4"> Link to video if cannot play from here</a>
+    </div>
+</div>
+</body>
+</html>

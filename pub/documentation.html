@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Assemblage Documentation</title>
+    <link rel="stylesheet" type="text/css" href="Assemblage_styles.css">
+    <link rel="stylesheet" type="text/css" href="example.css">
+
+    <!-- jquery from a Google CDN. -->
+    <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script defer type="text/javascript" src='./js/Assemblage.js'></script>
+
+    <script defer type="text/javascript" src='./js/documentation.js'></script>
+
+    <!--Highlight.js library used.-->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.1/styles/shades-of-purple.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.1/highlight.min.js"></script>
+</head>
+<body>
+<div style="margin-bottom: 50px">
+    <h2 style="font-size:40px;" class="center">ASSEMBLAGE DOCUMENTATION</h2>
+    <div class="center" style="border-bottom-style: solid; padding-bottom: 30px">
+        <a class="navigationLinks" href="index.html">Main page</a>
+    </div>
+
+    <div style="width: 100%; height: 100%">
+        <div style="position: absolute; left: 10%; margin-top: 10px">
+            <h1><a id="GettingStarted" href="#GettingStarted" style="text-decoration: none; color:#ea5455;"> Getting Started</a></h1>
+            <p>
+                Download the library from <a class=navigationLinks href=https://github.com/csc309-fall-2020/js-library-guintulu>Github</a>.
+            </p>
+            <p>
+                To use Assemblage Library, add the following stylesheet and scripts to your webpage:
+            </p>
+            <div id="myBlock">
+            <pre><code class="xml hljs">    &#x3C;!--Library Style Sheet--&#x3E;
+    &#x3C;link rel=&#x22;stylesheet&#x22; type=&#x22;text/css&#x22; href=&#x22;Assemblage_styles.css&#x22;&#x3E;
+    &#x3C;!--Load jquery from Google CDN.--&#x3E;
+    &#x3C;script defer src=&#x22;https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js&#x22;&#x3E;&#x3C;/script&#x3E;
+    &#x3C;!--Load Assemblage Library--&#x3E;
+    &#x3C;script defer type=&#x22;text/javascript&#x22; src=&#x27;./js/Assemblage.js&#x27;&#x3E;&#x3C;/script&#x3E;</code></pre>
+            </div>
+            <h3 style="color:#46ff99">
+                Basic Functionality
+            </h3>
+
+            <p>
+                This example shows how to initialize the library and the bare minimum to create an Assemblage drawer. <br/>
+                It also shows how to assign an onClick event on a button you created, which will open the Assemblage drawer.
+            </p>
+
+            <pre><code class="javascript">
+    const a = assemble();
+    a.createAssemblage({});
+    //buttonClass is the class name of the button you created to open Assemblage
+    a.openDrawer("buttonClass");
+            </code></pre>
+            <p>
+                The following is an example of a button to open Assemblage:
+            </p>
+
+            <pre><code class="xml hljs">
+    &#x3C;span class=&#x22;buttonClass&#x22;&#x3E;&#x26;#9776; Click me to try it out&#x3C;/span&#x3E;
+                </code></pre>
+
+            <span style="margin-top: 30px; margin-bottom: 30px; font-size:20px ;cursor:pointer" class="buttonClass">&#9776; Click me to try it out</span>
+
+            <h5><b>*Note:</b> If you would like the Assemblage drawer to not overlay your webpage, but instead to push your page content like the <a class="navigationLinks" href="./index.html">main page example</a>, <br/>
+                wrap your webpage body content in a div with id name "main" like so:
+            </h5>
+
+            <pre><code class="xml hljs"> &#x3C;body&#x3E;
+    &#x3C;div id=&#x22;main&#x22;&#x3E;
+        &#x3C;!--You&#x27;re main content goes here--&#x3E;
+    &#x3C;/div&#x3E;
+    &#x3C;div&#x3E;
+        &#x3C;!--Assemblage drawer will go here--&#x3E;
+    &#x3C;/div&#x3E;
+ &#x3C;/body&#x3E;</code></pre>
+
+            <p style="padding-top: 10px">
+                Currently, Assemblage saves to the clientside's localStorage. <br/>
+                The following code will show how to save the client's folders before they navigate away from your webpage.
+            </p>
+
+            <pre><code class="javascript">
+    const a = assemble();
+    if (a.getFolders() === null) {
+        a.createAssemblage({})
+
+    } else {
+        a.reAssemblage({}, e.getFolders())
+    }
+    a.openDrawer("buttonClass");
+            </code></pre>
+
+            <p style="padding-top: 10px">
+               The following example shows how to customize Assemblage to your liking.
+            </p>
+            <pre><code class="javascript">
+    const a = assemble();
+    a.createAssemblage({title: "Developer Title", width:"500px", position:"right"})
+    a.changeHeaderBackgroundColor("#252A34");
+    a.changeTitleFontColor("#ff2e63")
+    a.changeSecondaryFontColor("white", "#C594C5");
+    a.changeHeaderButtonColor("#eaeaea", "#FAC863")
+
+    a.changeBackgroundColor("#667188")
+    a.changeFolderBackgroundColor("#36485d");
+    a.changeFolderButtonColor("#a9e9a4", "white")
+    a.changeFolderFontColor("white");
+    e.openDrawer("openDrawer");
+            </code></pre>
+
+            <a class="navigationLinks" href="./example2.html">Here's an example of it in action</a>
+
+            <div style="margin-top: 50px">
+                <h1 style="border-top-style: dashed; padding-top: 30px"><a id="API" href="#API" style="text-decoration: none; color:#ea5455;">API</a></h1>
+            </div>
+            <pre><code class="javascript" style="color: #feaaff; font-size:20px; background-color:transparent">assemble()</code></pre>
+            <p style="padding-left:5em; line-height: 1.8"> Call this to create the object necessary to use Assemblage library.<br/>
+                <b>Returns:</b> an object with the library functions and values </p>
+
+            <h3 style="color:#46ff99; margin-top: 50px">
+                Values returned from assemble()
+            </h3>
+
+            <pre><code id="folders" class="javascript" style="margin-top: 0; color: #feaaff; font-size:20px; background-color:transparent">folders</code></pre>
+
+            <p style="padding-left:5em; line-height: 1.8">This is a list <code>[]</code> of <code>Folder</code> objects
+            </p>
+            <pre><code class="javascript" style="padding-left:5em; margin-top: 0; color: #feaaff; font-size:15px; background-color:transparent">
+            folderObject = { name: "Folder Name",
+                             id: "_folderID", //random id generated
+                             items: [new Item()] //items saved
+                            }
+
+            itemObject =   { name: "Item Name", //name of item, edited by user.
+                             id: "item_randomID", //random id generated
+                             link = "localhoast:5000/images/sample.jpg"; //link of the saved item
+                            }
+
+            // Example:
+            const exampleFoldersList =
+            [{"name":" Examples of Save Current Page","id":"_evpb4p6a5",
+            "items":
+                [{"name":"Main Page","id":"item_xup8jztm7","link":"https://protected-citadel-39083.herokuapp.com/index.html"}]},
+            {"name":"URL dragged into folder","id":"_vd79bkqxi",
+                "items":
+                    [{"name":"/images/sample.jpg","id":"item_wsllsw2tw","link":"https://protected-citadel-39083.herokuapp.com/images/sample.jpg"},
+                    {"name":"random image from google","id":"item_51qhgqtb6","link":"https://miro.medium.com/max/2400/1*MI686k5sDQrISBM6L8pf5A.jpeg"},
+                    {"name":"Youtube Video","id":"item_fepe2mrgu","link":"https://www.youtube.com/watch?v=5qap5aO4i9A"},
+                    {"name":"gif from Tenor","id":"item_vmfy0kl0l","link":"https://media1.tenor.com/images/806fa85fc55a55de66ab310e500b5f0f/tenor.gif"},
+                    {"name":"MP4 Video","id":"item_nu875gu23","link":"https://protected-citadel-39083.herokuapp.com/images/sampleVideo.mp4"}]}
+            ];
+
+            </code></pre>
+
+
+
+            <h3 style="color:#46ff99; margin-top: 50px">
+                Functions returned from assemble()
+            </h3>
+
+
+
+            <pre><code class="javascript" style="margin-top: 0; color: #feaaff; font-size:20px; background-color:transparent">createAssemblage(settings)</code></pre>
+            <p style="padding-left:5em; line-height: 1.8">This function creates an empty Assemblage drawer with the following settings object example:</p>
+            <pre><code class="javascript" style="padding-left:5em; margin-top: 0; color: #feaaff; font-size:15px; background-color:transparent"> settings = {title: "Title to give Assemblage Drawer", width: "350px", position: "right"} </code></pre>
+
+            <p style="padding-left:5em; line-height: 1.8"> This function accepts an empty object <code>{}</code> or any one of the above settings. <br/>
+                <code>title</code> is of type string. Default value: "Assemblage" <br/>
+                <code>width</code> is of type string. Default value: "350px". <br/>
+                &emsp; Accepts any CSS width value. The recommended minimum width is 300px. <br/>
+                <code>position</code> is of type string. Default value: "left". Other value accepted is "right".<br/>
+                &emsp; This positions the drawer either on the left or right side of the page. <br/>
+
+            <pre><code class="javascript" style="margin-top: 0; color: #feaaff; font-size:20px; background-color:transparent">openDrawer(buttonClass)</code></pre>
+            <p style="padding-left:5em; line-height: 1.8"> This function adds an onClick event handler to the buttonClass. <br/>
+                <code>buttonClass</code> is of type string. It's the class name of the button to add the event handler to.
+            </p>
+
+
+            <pre><code class="javascript" style="margin-top: 0; color: #feaaff; font-size:20px; background-color:transparent">reAssemblage(settings, folders)</code></pre>
+            <p style="padding-left:5em; line-height: 1.8">This function recreates an Assemblage drawer with the following settings and list of folders:</p>
+            <pre><code class="javascript" style="padding-left:5em; margin-top: 0; color: #feaaff; font-size:15px; background-color:transparent"> settings = {title: "Title to give Assemblage Drawer", width: "350px", position: "right"}</code></pre>
+            <pre><code class="javascript" style="padding-left:5em; margin-top: 0; color: #feaaff; font-size:15px; background-color:transparent"> folders = [folderObject]</code></pre>
+            <p style="padding-left:5em; line-height: 1.8"> This function accepts an empty settings object <code>{}</code> or any one of the above settings. <br/>
+                <code>title</code> is of type string. Default value: "Assemblage" <br/>
+                <code>width</code> is of type string. Default value: "350px". <br/>
+                &emsp; Accepts any CSS width value. The recommended minimum width is 300px. <br/>
+                <code>position</code> is of type string. Default value: "left". Other value accepted is "right".<br/>
+                &emsp; This positions the drawer either on the left or right side of the page. <br/>
+                <code>folders</code> is a list of <a class=navigationLinks href="#folders">folder objects</a>.
+            </p>
+
+            <pre><code class="javascript" style="margin-top: 0; color: #feaaff; font-size:20px; background-color:transparent">getFolders()</code></pre>
+            <p style="padding-left:5em; line-height: 1.8"><b>Returns:</b> a list of <a class=navigationLinks href="#folders">folder objects</a> retrieved from the clientside's localStorage. <br/>
+            </p>
+
+            <pre><code class="javascript" style="margin-top: 0; color: #feaaff; font-size:20px; background-color:transparent">clearFolders()</code></pre>
+            <p style="padding-left:5em; line-height: 1.8"> This function removes the list of <a class=navigationLinks href="#folders">folder objects</a> retrieved from the clientside's localStorage. <br/>
+            </p>
+
+            <pre><code class="javascript" style="margin-top: 0; color: #feaaff; font-size:20px; background-color:transparent">deleteFromDOM()</code></pre>
+            <p style="padding-left:5em; line-height: 1.8"> This function removes the Assemblage drawer from the DOM.<br/>
+            </p>
+
+            <pre><code class="javascript" style="margin-top: 0; color: #feaaff; font-size:20px; background-color:transparent">changeHeaderBackgroundColor(color)</code></pre>
+            <p style="padding-left:5em; line-height: 1.8"> This function changes the header background color of the Assemblage drawer.<br/>
+                <code>color</code> is of type string. Accepts a valid css color.
+            </p>
+
+            <pre><code class="javascript" style="margin-top: 0; color: #feaaff; font-size:20px; background-color:transparent">changeTitleFontColor(color)</code></pre>
+            <p style="padding-left:5em; line-height: 1.8"> This function changes the header title font colors of the Assemblage drawer.<br/>
+                <code>color</code> is of type string. Accepts a valid css color.
+            </p>
+
+            <pre><code class="javascript" style="margin-top: 0; color: #feaaff; font-size:20px; background-color:transparent">changeSecondaryFontColor(color, hoverColor)</code></pre>
+            <p style="padding-left:5em; line-height: 1.8"> This function changes the font color of the "create new folder" and "save current page" button Assemblage drawer. <br/>
+                It also changes the color when you hover over the button. <br/>
+                <code>color</code> is of type string. Accepts a valid css color.<br/>
+                <code>hoverColor</code> is of type string. Accepts a valid css color.<br/>
+            </p>
+
+            <pre><code class="javascript" style="margin-top: 0; color: #feaaff; font-size:20px; background-color:transparent">changeHeaderButtonColor(color, hoverColor)</code></pre>
+            <p style="padding-left:5em; line-height: 1.8"> This function changes the font color of the navigation (exit and back) buttons in the header of the Assemblage drawer. <br/>
+                It also changes the color when you hover over the button. <br/>
+                <code>color</code> is of type string. Accepts a valid css color.<br/>
+                <code>hoverColor</code> is of type string. Accepts a valid css color.<br/>
+            </p>
+
+            <pre><code class="javascript" style="margin-top: 0; color: #feaaff; font-size:20px; background-color:transparent">changeBackgroundColor(color)</code></pre>
+            <p style="padding-left:5em; line-height: 1.8"> This function changes the background color of the Assemblage drawer.<br/>
+                <code>color</code> is of type string. Accepts a valid css color.
+            </p>
+
+            <pre><code class="javascript" style="margin-top: 0; color: #feaaff; font-size:20px; background-color:transparent">changeFolderBackgroundColor(color)</code></pre>
+            <p style="padding-left:5em; line-height: 1.8"> This function changes the folders' background colors of the Assemblage drawer.<br/>
+                <code>color</code> is of type string. Accepts a valid css color.
+            </p>
+
+            <pre><code class="javascript" style="margin-top: 0; color: #feaaff; font-size:20px; background-color:transparent">changeFolderButtonColor(color, hoverColor)</code></pre>
+            <p style="padding-left:5em; line-height: 1.8"> This function changes the font color of the delete and edit buttons in the folders of the Assemblage drawer. <br/>
+                It also changes the color when you hover over the button. <br/>
+                <code>color</code> is of type string. Accepts a valid css color.<br/>
+                <code>hoverColor</code> is of type string. Accepts a valid css color.<br/>
+            </p>
+            <pre><code class="javascript" style="margin-top: 0; color: #feaaff; font-size:20px; background-color:transparent">changeFolderFontColor(color)</code></pre>
+            <p style="padding-left:5em; line-height: 1.8"> This function changes the folders' font colors of the Assemblage drawer.<br/>
+                <code>color</code> is of type string. Accepts a valid css color.
+            </p>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

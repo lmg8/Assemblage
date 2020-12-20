@@ -40,3 +40,21 @@ html {
 .linksToPages a{
     margin-left: 10px;
 }
+
+.openDrawer{
+    display:inline-block;
+    color: #ca3e47;
+}
+
+.openDrawer:hover{
+    font-weight: bold;
+    font-size: 40px;
+}
+
+.navigationLinks {
+    color: #8383de;
+}
+
+.navigationLinks:hover {
+    color: #ec8f8f;
+}

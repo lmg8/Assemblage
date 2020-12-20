@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Assemblage</title>
+    <title>Assemblage Example Page</title>
     <link rel="stylesheet" type="text/css" href="Assemblage_styles.css">
     <link rel="stylesheet" type="text/css" href="example.css">
     <!-- First we load jquery from a Google CDN. -->
@@ -12,81 +12,46 @@
     <!-- Then we load a script that depends on our libraries (and jQuery) -->
     <script defer type="text/javascript" src='./js/examples.js'></script>
 
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.1/styles/monokai-sublime.min.css">
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.1/highlight.min.js"></script>
 </head>
-
 <body>
-    <div id="main">
-        <h2 style="font-size:40px;" class="center">ASSEMBLAGE DEMO</h2>
-        <span style="font-size:30px;cursor:pointer" class="openDrawer center">&#9776; Click me to open and create new folder!</span>
-        <div class="board">
-            <div class="column">
-                <h3>Drag these images to created folder to save</h3>
+<div id="main">
+    <h2 style="font-size:40px;" class="center">ASSEMBLAGE DEMO</h2>
 
-                <a href="./images/sample.jpg" onclick="return false">
-                    <img src = "./images/sample.jpg">
-                </a>
+    <div class="center">
+        <a class="navigationLinks" href="index.html">Main page</a>
+    </div>
 
-                <a href="./images/sample2.jpg" onclick="return false">
-                    <img src = "./images/sample2.jpg">
-                </a>
+    <div class="center">
+        <span style="margin-top: 30px; font-size:30px;cursor:pointer" class="openDrawer">&#9776; Click me to open</span>
+    </div>
 
-                <a href="./images/sample3.jpg" onclick="return false">
-                    <img src = "./images/sample3.jpg">
-                </a>
-            </div>
-        </div>
+    <div class="center">
+        <p style="text-align:center; line-height: 1.8">
+            After opening Assemblage, open one of your folders or create a new one and "Save current page". <br/>
 
-        <p class="showAPage center">
-            Click one of these pages below and "Save current page" in your created folder
-        </p>
-        <p class="linksToPages center">
+            You will be able to access this page once you go back to the main page
 
-            <a href="#Page1" onclick="show('Page1');">Show page 1</a>
-
-            <a href="#Page2" onclick="show('Page2');">Show page 2</a>
-
-            <a href="#Page3" onclick="show('Page3');">Show page 3</a>
         </p>
 
-
-
-        <div id="Page1" class="page" style="display:none">
-            Content of page 1Content of page 1Content of page 1Content of page 1Content of page 1Content of page 1
-        </div>
-        <div id="Page2" class="page" style="display:none">
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-            ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-            nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
-            anim id est laborum."
-        </div>
-        <div id="Page3" class="page" style="display:none">
-            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
-            aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-            Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni
-            dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor
-            sit amet,
-        </div>
-        <div id="myBlock">
-        <pre><code class="javascript">
- e.reAssemblage({title: "Developer Title", width:"350px", position:"left"},
-    [{"name":"New folder","id":"_evpb4p6a5",
-        "items":
-            [{"name":"page2","id":"item_ammkxh8my","link":null,"hash":"#Page2"},
-                {"name":"page1","id":"item_85m608t33","link":null,"hash":"#Page1"}]},
-        {"name":"Pictures","id":"_vd79bkqxi",
-            "items":
-                [{"name":"/images/sample.jpg","id":"item_wsllsw2tw","link":"http://localhost:5000/images/sample.jpg","hash":null},
-                    {"name":"/images/sample2.jpg","id":"item_hlvmbi6u2","link":"http://localhost:5000/images/sample2.jpg","hash":null}]}]
-)
-        </code></pre>
-        </div>
     </div>
 
 
+    <div class="center" style="margin-top: 50px;">
+        <video class="center" width="500" controls autoplay >
+            <source src="./images/sampleVideo.mp4" type="video/mp4">
+            <source src="./images/sampleVideo.mp4" type="video/ogg">
+            Your browser does not support HTML video.
+        </video>
+    </div>
+    <div class="center">
+        Video by Karolina Grabowska from Pexels
+    </div>
+    <div class="center">
+        <a class="navigationLinks" style="margin-top: 50px" href="./images/sampleVideo.mp4"> Drag me to a folder to save link of this video</a>
+    </div>
+
+
+</div>
 
 
 </body>
