@@ -16,7 +16,7 @@ To use Assemblage Library, add the following stylesheet and scripts to your webp
     <!--Load Assemblage Library-->
     <script defer type="text/javascript" src='./js/Assemblage.js'></script>
 ```
-#####Basic Functionality
+##### Basic Functionality
 This example shows how to initialize the library and the bare minimum to create an Assemblage drawer.
 It also shows how to assign an onClick event on a button you created, which will open the Assemblage drawer.
 
