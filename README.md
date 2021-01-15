@@ -1,4 +1,4 @@
-# js-library-guintulu
+# Assemblage
 
 Link to landing page: https://protected-citadel-39083.herokuapp.com/
 
